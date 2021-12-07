@@ -22,7 +22,34 @@ class Codia extends Program {
         return plateau;
     }
 
+    Joueur initJoueur(int i, int y){
+        Joueur joueur = new Joueur();
+        print("Choisissez votre pseudo : ");
+        joueur.pseudo = readString();
+        joueur.pos = new Position();
+        joueur.pos.i = i;
+        joueur.pos.y = y;
+        return joueur;
+    }
+
+    void haut(char[][] plateau, Joueur joueur){
+
+    }
+
+    void bas(char[][] plateau, Joueur joueur){
+
+    }
+
+    void droite(char[][] plateau, Joueur joueur){
+
+    }
+
+    void gauche(char[][] plateau, Joueur joueur){
+
+    }
+
     void algorithm(){
+        Joueur joueur = initJoueur(1, 1);
         char[][] plateau = initPlateau();
         println(plateau);
     }
