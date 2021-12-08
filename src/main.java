@@ -184,6 +184,10 @@ class Codia extends Program {
         readString();
     }
 
+    int random(int min, int max){
+        return (int)(random()*(max-min))+min;
+    }
+
     void algorithm(){
         Joueur joueur = initJoueur(1, 1);
         char[][] plateau = initPlateau(joueur);
