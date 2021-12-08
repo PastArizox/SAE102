@@ -52,20 +52,56 @@ class Codia extends Program {
         println(result);
     }
 
-    void haut(char[][] plateau, Joueur joueur){
-        println("haut");
+    boolean haut(char[][] plateau, Joueur joueur){
+        boolean result = false;
+        if (plateau[joueur.pos.i-1][joueur.pos.y] == '#' || 
+            plateau[joueur.pos.i-1][joueur.pos.y] == '/'){
+                result = true;
+        } else {
+            plateau[joueur.pos.i][joueur.pos.y] = ' ';
+            joueur.pos.i -= 1;
+            plateau[joueur.pos.i][joueur.pos.y] = '@';
+        }
+        return result;
     }
 
-    void bas(char[][] plateau, Joueur joueur){
-        println("bas");
+    boolean bas(char[][] plateau, Joueur joueur){
+        boolean result = false;
+        if (plateau[joueur.pos.i+1][joueur.pos.y] == '#' || 
+            plateau[joueur.pos.i+1][joueur.pos.y] == '/'){
+                result = true;
+        } else {
+            plateau[joueur.pos.i][joueur.pos.y] = ' ';
+            joueur.pos.i += 1;
+            plateau[joueur.pos.i][joueur.pos.y] = '@';
+        }
+        return result;
     }
 
-    void droite(char[][] plateau, Joueur joueur){
-        println("droite");
+    boolean droite(char[][] plateau, Joueur joueur){
+        boolean result = false;
+        if (plateau[joueur.pos.i][joueur.pos.y+1] == '#' || 
+            plateau[joueur.pos.i][joueur.pos.y+1] == '/'){
+                result = true;
+        } else {
+            plateau[joueur.pos.i][joueur.pos.y] = ' ';
+            joueur.pos.y += 1;
+            plateau[joueur.pos.i][joueur.pos.y] = '@';
+        }
+        return result;
     }
 
-    void gauche(char[][] plateau, Joueur joueur){
-        println("gauche");
+    boolean gauche(char[][] plateau, Joueur joueur){
+        boolean result = false;
+        if (plateau[joueur.pos.i][joueur.pos.y-1] == '#' || 
+            plateau[joueur.pos.i][joueur.pos.y-1] == '/'){
+                result = true;
+        } else {
+            plateau[joueur.pos.i][joueur.pos.y] = ' ';
+            joueur.pos.y -= 1;
+            plateau[joueur.pos.i][joueur.pos.y] = '@';
+        }
+        return result;
     }
 
     void algorithm(){
@@ -91,24 +127,24 @@ class Codia extends Program {
         clearScreen();
 
         int indexInstructions = 0;
-        while (instructions[indexInstructions] != null){
+        boolean dead = false;
+        while (instructions[indexInstructions] != null && !dead){
+            println(plateau);
+            delay(1000);
+            clearScreen();
             String instruction = instructions[indexInstructions];
             switch (instruction){
                 case "haut":
-                    haut(plateau, joueur);
-                    delay(500);
+                    dead = haut(plateau, joueur);
                     break;
                 case "bas":
-                    bas(plateau, joueur);
-                    delay(500);
+                    dead = bas(plateau, joueur);
                     break;
                 case "droite":
-                    droite(plateau, joueur);
-                    delay(500);
+                    dead = droite(plateau, joueur);
                     break;
                 case "gauche":
-                    gauche(plateau, joueur);
-                    delay(500);
+                    dead = gauche(plateau, joueur);
                     break;
             }
             indexInstructions++;
