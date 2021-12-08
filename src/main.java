@@ -16,7 +16,7 @@ class Codia extends Program {
             {'#', ' ', ' ', ' ', '/', '/', '#'},
             {'#', '/', '/', ' ', '/', '/', '#'},
             {'#', '/', '/', ' ', '/', '/', '#'},
-            {'#', '/', '/', '!', '/', '/', '#'},
+            {'#', '/', '/', '?', '/', '/', '#'},
             {'#', '#', '#', '#', '#', '#', '#'}
         };
         plateau[joueur.pos.i][joueur.pos.y] = joueur.car;
@@ -57,6 +57,10 @@ class Codia extends Program {
         if (plateau[joueur.pos.i-1][joueur.pos.y] == '#' || 
             plateau[joueur.pos.i-1][joueur.pos.y] == '/'){
                 result = true;
+        } else if (plateau[joueur.pos.i-1][joueur.pos.y] == '?'){
+            plateau[joueur.pos.i][joueur.pos.y] = ' ';
+            joueur.pos.i += 1;
+            plateau[joueur.pos.i][joueur.pos.y] = '!';
         } else {
             plateau[joueur.pos.i][joueur.pos.y] = ' ';
             joueur.pos.i -= 1;
@@ -70,6 +74,10 @@ class Codia extends Program {
         if (plateau[joueur.pos.i+1][joueur.pos.y] == '#' || 
             plateau[joueur.pos.i+1][joueur.pos.y] == '/'){
                 result = true;
+        } else if (plateau[joueur.pos.i+1][joueur.pos.y] == '?'){
+            plateau[joueur.pos.i][joueur.pos.y] = ' ';
+            joueur.pos.i += 1;
+            plateau[joueur.pos.i][joueur.pos.y] = '!';
         } else {
             plateau[joueur.pos.i][joueur.pos.y] = ' ';
             joueur.pos.i += 1;
@@ -83,6 +91,10 @@ class Codia extends Program {
         if (plateau[joueur.pos.i][joueur.pos.y+1] == '#' || 
             plateau[joueur.pos.i][joueur.pos.y+1] == '/'){
                 result = true;
+        } else if (plateau[joueur.pos.i][joueur.pos.y+1] == '?'){
+            plateau[joueur.pos.i][joueur.pos.y] = ' ';
+            joueur.pos.i += 1;
+            plateau[joueur.pos.i][joueur.pos.y] = '!';
         } else {
             plateau[joueur.pos.i][joueur.pos.y] = ' ';
             joueur.pos.y += 1;
@@ -96,6 +108,10 @@ class Codia extends Program {
         if (plateau[joueur.pos.i][joueur.pos.y-1] == '#' || 
             plateau[joueur.pos.i][joueur.pos.y-1] == '/'){
                 result = true;
+        } else if (plateau[joueur.pos.i][joueur.pos.y-1] == '?'){
+            plateau[joueur.pos.i][joueur.pos.y] = ' ';
+            joueur.pos.i += 1;
+            plateau[joueur.pos.i][joueur.pos.y] = '!';
         } else {
             plateau[joueur.pos.i][joueur.pos.y] = ' ';
             joueur.pos.y -= 1;
@@ -104,9 +120,10 @@ class Codia extends Program {
         return result;
     }
 
-    void execution(char[][] plateau, Joueur joueur, String[] instructions){
+    boolean execution(char[][] plateau, Joueur joueur, String[] instructions){
         int indexInstructions = 0;
         boolean dead = false;
+        boolean win = false;
         while (instructions[indexInstructions] != null && !dead){
             println(plateau);
             delay(1000);
@@ -128,6 +145,10 @@ class Codia extends Program {
             }
             indexInstructions++;
         }
+        if (plateau[joueur.pos.i][joueur.pos.y] == '!'){
+            win = true;
+        }
+        return win;
     }
 
     void algorithm(){
@@ -151,6 +172,11 @@ class Codia extends Program {
         } while (!equals(choix[entreeInt-1], "fin"));
 
         clearScreen();
-        execution(plateau, joueur, instructions);
+        boolean result = execution(plateau, joueur, instructions);
+        if (result){
+            println("Bien joue tu as gagne !");
+        } else {
+            println("Dommage, tu as perdu, retente ta chance !");
+        }
     }
 }
