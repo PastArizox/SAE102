@@ -151,11 +151,8 @@ class Codia extends Program {
         return win;
     }
 
-    void algorithm(){
-        Joueur joueur = initJoueur(1, 1);
-        char[][] plateau = initPlateau(joueur);
+    String[] choixInstructions(char[][] plateau){
         String[] instructions = new String[20];
-
         String[] choix = new String[]{"haut", "bas", "droite", "gauche", "fin"};
         int indexChoix = 0;
         int entreeInt = 0;
@@ -170,7 +167,13 @@ class Codia extends Program {
             instructions[indexChoix] = choix[entreeInt-1];
             indexChoix++;
         } while (!equals(choix[entreeInt-1], "fin"));
+        return instructions;
+    }
 
+    void algorithm(){
+        Joueur joueur = initJoueur(1, 1);
+        char[][] plateau = initPlateau(joueur);
+        String[] instructions = choixInstructions(plateau);
         clearScreen();
         boolean result = execution(plateau, joueur, instructions);
         if (result){
