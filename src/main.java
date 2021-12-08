@@ -1,4 +1,8 @@
 class Codia extends Program {
+    final char bordure = '#';
+    final char mur = '/';
+    final char arrivee = '!';
+
     void println(char[][] tab){
         String result = "";
         for (int i = 0; i<length(tab, 1); i++){
@@ -31,6 +35,25 @@ class Codia extends Program {
         joueur.pos.i = i;
         joueur.pos.y = y;
         return joueur;
+    }
+
+    String[] choixInstructions(char[][] plateau){
+        String[] instructions = new String[20];
+        String[] choix = new String[]{"haut", "bas", "droite", "gauche", "fin"};
+        int indexChoix = 0;
+        int entreeInt = 0;
+        do {
+            clearScreen(); println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+            println(plateau);
+            afficherInstructions(instructions);
+            println("\n");
+            afficherChoix(choix);
+            print("Votre choix : ");
+            entreeInt = readInt();
+            instructions[indexChoix] = choix[entreeInt-1];
+            indexChoix++;
+        } while (!equals(choix[entreeInt-1], "fin"));
+        return instructions;
     }
 
     void afficherInstructions(String[] instructions){
@@ -151,28 +174,21 @@ class Codia extends Program {
         return win;
     }
 
-    String[] choixInstructions(char[][] plateau){
-        String[] instructions = new String[20];
-        String[] choix = new String[]{"haut", "bas", "droite", "gauche", "fin"};
-        int indexChoix = 0;
-        int entreeInt = 0;
-        do {
-            clearScreen(); println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
-            println(plateau);
-            afficherInstructions(instructions);
-            println("\n");
-            afficherChoix(choix);
-            print("Votre choix : ");
-            entreeInt = readInt();
-            instructions[indexChoix] = choix[entreeInt-1];
-            indexChoix++;
-        } while (!equals(choix[entreeInt-1], "fin"));
-        return instructions;
+    void afficherRegles(Joueur joueur){
+        println("Bonjour, " + joueur.pseudo + " ! Bienvenue dans Codia !\n");
+        println("Le but du jeu est tres simple.");
+        println("Le '"+ joueur.car +"' represente ton joueur.");
+        println("Le '"+ mur +"' represente les murs et le '"+ bordure +"' represente la bordure.");
+        println("Ton but est d'arriver au '"+ arrivee +"' sans toucher les murs ni la bordure.\n");
+        println("Bonne chance ! :D");
+        readString();
     }
 
     void algorithm(){
         Joueur joueur = initJoueur(1, 1);
         char[][] plateau = initPlateau(joueur);
+        clearScreen();
+        afficherRegles(joueur);
         String[] instructions = choixInstructions(plateau);
         clearScreen();
         boolean result = execution(plateau, joueur, instructions);
