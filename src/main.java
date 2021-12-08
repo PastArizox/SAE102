@@ -53,32 +53,34 @@ class Codia extends Program {
     }
 
     void haut(char[][] plateau, Joueur joueur){
-
+        println("haut");
     }
 
     void bas(char[][] plateau, Joueur joueur){
-
+        println("bas");
     }
 
     void droite(char[][] plateau, Joueur joueur){
-
+        println("droite");
     }
 
     void gauche(char[][] plateau, Joueur joueur){
-
+        println("gauche");
     }
 
     void algorithm(){
         Joueur joueur = initJoueur(1, 1);
         char[][] plateau = initPlateau(joueur);
-        println(plateau);
         String[] instructions = new String[20];
 
         String[] choix = new String[]{"haut", "bas", "droite", "gauche", "fin"};
         int indexChoix = 0;
         int entreeInt = 0;
         do {
+            clearScreen(); println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+            println(plateau);
             afficherInstructions(instructions);
+            println("\n");
             afficherChoix(choix);
             print("Votre choix : ");
             entreeInt = readInt();
@@ -86,20 +88,30 @@ class Codia extends Program {
             indexChoix++;
         } while (!equals(choix[entreeInt-1], "fin"));
 
+        clearScreen();
+
         int indexInstructions = 0;
-        // while (instructions[index] != null){
-        //     String instruction = instructions[i];
-        //     switch (instruction){
-        //         case "haut":
-        //             haut(plateau, joueur);
-        //         case "bas":
-        //             bas(plateau, joueur);
-        //         case "droite":
-        //             droite(plateau, joueur);
-        //         case "gauche":
-        //             gauche(plateau, joueur);
-        //     }
-        //     index++;
-        // }
+        while (instructions[indexInstructions] != null){
+            String instruction = instructions[indexInstructions];
+            switch (instruction){
+                case "haut":
+                    haut(plateau, joueur);
+                    delay(500);
+                    break;
+                case "bas":
+                    bas(plateau, joueur);
+                    delay(500);
+                    break;
+                case "droite":
+                    droite(plateau, joueur);
+                    delay(500);
+                    break;
+                case "gauche":
+                    gauche(plateau, joueur);
+                    delay(500);
+                    break;
+            }
+            indexInstructions++;
+        }
     }
 }
