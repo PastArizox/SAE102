@@ -104,28 +104,7 @@ class Codia extends Program {
         return result;
     }
 
-    void algorithm(){
-        Joueur joueur = initJoueur(1, 1);
-        char[][] plateau = initPlateau(joueur);
-        String[] instructions = new String[20];
-
-        String[] choix = new String[]{"haut", "bas", "droite", "gauche", "fin"};
-        int indexChoix = 0;
-        int entreeInt = 0;
-        do {
-            clearScreen(); println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
-            println(plateau);
-            afficherInstructions(instructions);
-            println("\n");
-            afficherChoix(choix);
-            print("Votre choix : ");
-            entreeInt = readInt();
-            instructions[indexChoix] = choix[entreeInt-1];
-            indexChoix++;
-        } while (!equals(choix[entreeInt-1], "fin"));
-
-        clearScreen();
-
+    void execution(char[][] plateau, Joueur joueur, String[] instructions){
         int indexInstructions = 0;
         boolean dead = false;
         while (instructions[indexInstructions] != null && !dead){
@@ -149,5 +128,29 @@ class Codia extends Program {
             }
             indexInstructions++;
         }
+    }
+
+    void algorithm(){
+        Joueur joueur = initJoueur(1, 1);
+        char[][] plateau = initPlateau(joueur);
+        String[] instructions = new String[20];
+
+        String[] choix = new String[]{"haut", "bas", "droite", "gauche", "fin"};
+        int indexChoix = 0;
+        int entreeInt = 0;
+        do {
+            clearScreen(); println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+            println(plateau);
+            afficherInstructions(instructions);
+            println("\n");
+            afficherChoix(choix);
+            print("Votre choix : ");
+            entreeInt = readInt();
+            instructions[indexChoix] = choix[entreeInt-1];
+            indexChoix++;
+        } while (!equals(choix[entreeInt-1], "fin"));
+
+        clearScreen();
+        execution(plateau, joueur, instructions);
     }
 }
