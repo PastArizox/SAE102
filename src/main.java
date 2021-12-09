@@ -14,17 +14,15 @@ class Codia extends Program {
         println(result);
     }
 
-    char[][] initPlateau(Joueur joueur){
-        char[][] plateau = new char[][]{
-            {'#', '#', '#', '#', '#', '#', '#'},
-            {'#', ' ', ' ', ' ', '/', '/', '#'},
-            {'#', '/', '/', ' ', '/', '/', '#'},
-            {'#', '/', '/', ' ', '/', '/', '#'},
-            {'#', '/', '/', '?', '/', '/', '#'},
-            {'#', '#', '#', '#', '#', '#', '#'}
-        };
-        plateau[joueur.pos.i][joueur.pos.y] = joueur.car;
-        return plateau;
+    void println(int[][] tab){
+        String result = "";
+        for (int i = 0; i<length(tab, 1); i++){
+            for (int j = 0; j<length(tab, 2); j++){
+                result += tab[i][j] + " ";
+            }
+            result += "\n";
+        }
+        println(result);
     }
 
     Joueur initJoueur(int i, int y){
@@ -188,18 +186,57 @@ class Codia extends Program {
         return (int)(random()*(max-min))+min;
     }
 
+    int[][] initPlateau(){
+        int[][] plateau_int = new int[random(7, 10)][random(7, 10)];
+        for (int i = 0; i<length(plateau_int, 1); i++){
+            for (int j = 0; j<length(plateau_int, 2); j++){
+                if (i == 0 || i == length(plateau_int, 1)-1 ||
+                    j == 0 || j == length(plateau_int, 2)-1){
+                    plateau_int[i][j] = 0;
+                } else {
+                    plateau_int[i][j] = random(10, 99);
+                }
+            }
+        }
+        return plateau_int;
+    }
+
+    char[][] tracerChemin(int[][] plateau_int){
+        // Prendre le int le plus petit sur i = 0 (chemin = 1)
+        
+        // Prendre la case avec l'entier le plus petit à côté (chemin = 1)
+
+        // Répéter jusqu'à ce que i = length(plateau)-1
+
+        // Remplacer tous les nombres restants par 2 (murs = 2)
+
+        /* Convertir le tableau de int en tableaud de char (0 = bordure)
+                                                            1 = chemin
+                                                            2 = mur)
+        */
+        return new char[10][10];
+    }
+
+    char[][] genererPlateau(){
+        int[][] plateau_int = initPlateau();
+        char[][] plateau = tracerChemin(plateau_int);
+        println(plateau_int);
+        // tracerChemin(plateau);
+        return plateau;
+    }
+
     void algorithm(){
         Joueur joueur = initJoueur(1, 1);
-        char[][] plateau = initPlateau(joueur);
-        clearScreen();
-        afficherRegles(joueur);
-        String[] instructions = choixInstructions(plateau);
-        clearScreen();
-        boolean result = execution(plateau, joueur, instructions);
-        if (result){
-            println("Bien joue tu as gagne !");
-        } else {
-            println("Dommage, tu as perdu, retente ta chance !");
-        }
+        char[][] plateau = genererPlateau();
+        // clearScreen();
+        // afficherRegles(joueur);
+        // String[] instructions = choixInstructions(plateau);
+        // clearScreen();
+        // boolean result = execution(plateau, joueur, instructions);
+        // if (result){
+        //     println("Bien joue tu as gagne !");
+        // } else {
+        //     println("Dommage, tu as perdu, retente ta chance !");
+        // }
     }
 }
