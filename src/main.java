@@ -3,6 +3,7 @@ class Codia extends Program {
     final char mur = '/';
     final char arrivee = '!';
 
+    // Affiche un tableau à 2 dimensions
     void println(char[][] tab){
         String result = "";
         for (int i = 0; i<length(tab, 1); i++){
@@ -14,6 +15,7 @@ class Codia extends Program {
         println(result);
     }
 
+    // Initialise un tableau à 2 dimensions avec des caractères
     char[][] initPlateau(Joueur joueur){
         char[][] plateau = new char[][]{
             {'#', '#', '#', '#', '#', '#', '#'},
@@ -27,6 +29,7 @@ class Codia extends Program {
         return plateau;
     }
 
+    // Initialise le joueur et sa position
     Joueur initJoueur(int i, int y){
         Joueur joueur = new Joueur();
         print("Choisissez votre pseudo : ");
@@ -37,6 +40,7 @@ class Codia extends Program {
         return joueur;
     }
 
+    // Fonction pour demander les instructions au joueur
     String[] choixInstructions(char[][] plateau){
         String[] instructions = new String[20];
         String[] choix = new String[]{"haut", "bas", "droite", "gauche", "fin"};
@@ -56,6 +60,7 @@ class Codia extends Program {
         return instructions;
     }
 
+    // Fonction pour afficher les instructions choisies par le joueur
     void afficherInstructions(String[] instructions){
         String result = "Instructions : {";
         for (int i = 0; i<length(instructions); i++){
@@ -67,6 +72,7 @@ class Codia extends Program {
         println(result);
     }
 
+    // Affiche les instructions disponibles
     void afficherChoix(String[] choix){
         String result = "Choisir une instruction : \n\n";
         for (int i = 0; i<length(choix); i++){
@@ -75,6 +81,7 @@ class Codia extends Program {
         println(result);
     }
 
+    // Déplacement vers le haut
     boolean haut(char[][] plateau, Joueur joueur){
         boolean result = false;
         if (plateau[joueur.pos.i-1][joueur.pos.y] == '#' || 
@@ -91,7 +98,7 @@ class Codia extends Program {
         }
         return result;
     }
-
+    // Déplacement vers le bas
     boolean bas(char[][] plateau, Joueur joueur){
         boolean result = false;
         if (plateau[joueur.pos.i+1][joueur.pos.y] == '#' || 
@@ -109,6 +116,7 @@ class Codia extends Program {
         return result;
     }
 
+    // Déplacement vers la droite
     boolean droite(char[][] plateau, Joueur joueur){
         boolean result = false;
         if (plateau[joueur.pos.i][joueur.pos.y+1] == '#' || 
@@ -126,6 +134,7 @@ class Codia extends Program {
         return result;
     }
 
+    // Déplacement vers la gauche
     boolean gauche(char[][] plateau, Joueur joueur){
         boolean result = false;
         if (plateau[joueur.pos.i][joueur.pos.y-1] == '#' || 
@@ -143,6 +152,7 @@ class Codia extends Program {
         return result;
     }
 
+    // Fonction pour exécuter les fonctions précédentes (choix d'instructions ...)
     boolean execution(char[][] plateau, Joueur joueur, String[] instructions){
         int indexInstructions = 0;
         boolean dead = false;
@@ -174,6 +184,7 @@ class Codia extends Program {
         return win;
     }
 
+    // Affichage des règles
     void afficherRegles(Joueur joueur){
         println("Bonjour, " + joueur.pseudo + " ! Bienvenue dans Codia !\n");
         println("Le but du jeu est tres simple.");
@@ -184,6 +195,7 @@ class Codia extends Program {
         readString();
     }
 
+    // Fontion principale
     void algorithm(){
         Joueur joueur = initJoueur(1, 1);
         char[][] plateau = initPlateau(joueur);
