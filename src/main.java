@@ -1,9 +1,8 @@
 import extensions.CSVFile;
 
 class Codia extends Program {
-    final char bordure = '#';
     final char mur = '#';
-    final char arrivee = '!';
+    final char arrivee = '?';
 
     // Affiche un tableau à 2 dimensions
     void println(String[][] tab){
@@ -88,7 +87,7 @@ class Codia extends Program {
                 result = true;
         } else if (equals(plateau[joueur.pos.i-1][joueur.pos.y], "?")){
             plateau[joueur.pos.i][joueur.pos.y] = " ";
-            joueur.pos.i += 1;
+            joueur.pos.i -= 1;
             plateau[joueur.pos.i][joueur.pos.y] = "!";
         } else {
             plateau[joueur.pos.i][joueur.pos.y] = " ";
@@ -121,7 +120,7 @@ class Codia extends Program {
                 result = true;
         } else if (equals(plateau[joueur.pos.i][joueur.pos.y+1], "?")){
             plateau[joueur.pos.i][joueur.pos.y] = " ";
-            joueur.pos.i += 1;
+            joueur.pos.y += 1;
             plateau[joueur.pos.i][joueur.pos.y] = "!";
         } else {
             plateau[joueur.pos.i][joueur.pos.y] = " ";
@@ -138,7 +137,7 @@ class Codia extends Program {
                 result = true;
         } else if (equals(plateau[joueur.pos.i][joueur.pos.y-1], "?")){
             plateau[joueur.pos.i][joueur.pos.y] = " ";
-            joueur.pos.i += 1;
+            joueur.pos.y -= 1;
             plateau[joueur.pos.i][joueur.pos.y] = "!";
         } else {
             plateau[joueur.pos.i][joueur.pos.y] = " ";
@@ -155,7 +154,7 @@ class Codia extends Program {
         boolean win = false;
         while (instructions[indexInstructions] != null && !dead){
             println(plateau);
-            delay(1000);
+            delay(500);
             clearScreen();
             String instruction = instructions[indexInstructions];
             switch (instruction){
@@ -184,9 +183,9 @@ class Codia extends Program {
     void afficherRegles(Joueur joueur){
         println("Bonjour, " + joueur.pseudo + " ! Bienvenue dans Codia !\n");
         println("Le but du jeu est tres simple.");
-        println("Le '"+ joueur.car +"' represente ton joueur.");
-        println("Le '"+ mur +"' represente les murs et le '"+ bordure +"' represente la bordure.");
-        println("Ton but est d'arriver au '"+ arrivee +"' sans toucher les murs ni la bordure.\n");
+        println("Le '" + joueur.car + "' represente ton joueur.");
+        println("Le '" + mur + "' represente les murs.");
+        println("Ton but est d'arriver au '" + arrivee + "' sans toucher les murs.\n");
         println("Bonne chance ! :D");
         readString();
     }
@@ -204,7 +203,11 @@ class Codia extends Program {
             clearScreen();
             result = execution(plateau, joueur, instructions);
             if (result){
-                println("Bien joue, tu passes au prochaine niveau ! Bonne chance !");
+                if (joueur.niveau < length(getAllFilesFromDirectory("../csv"))){
+                    println("Bien joue, tu passes au prochaine niveau ! Bonne chance !");
+                } else {
+                    println("Tu as fini tous les niveaux du jeu, bien joue !");
+                }
                 joueur.niveau++;
                 joueur.pos.i = 1;
                 joueur.pos.y = 1;
@@ -212,6 +215,6 @@ class Codia extends Program {
                 println("Dommage, tu as perdu, retente ta chance !");
             }
             delay(2000);
-        } while (result);
+        } while (result && joueur.niveau <= length(getAllFilesFromDirectory("../csv")));
     }
 }
