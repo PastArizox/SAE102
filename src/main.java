@@ -1,10 +1,12 @@
+import extensions.CSVFile;
+
 class Codia extends Program {
     final char bordure = '#';
-    final char mur = '/';
+    final char mur = '#';
     final char arrivee = '!';
 
     // Affiche un tableau à 2 dimensions
-    void println(char[][] tab){
+    void println(String[][] tab){
         String result = "";
         for (int i = 0; i<length(tab, 1); i++){
             for (int j = 0; j<length(tab, 2); j++){
@@ -16,16 +18,14 @@ class Codia extends Program {
     }
 
     // Initialise un tableau à 2 dimensions avec des caractères
-    char[][] initPlateau(Joueur joueur){
-        char[][] plateau = new char[][]{
-            {'#', '#', '#', '#', '#', '#', '#'},
-            {'#', ' ', ' ', ' ', '/', '/', '#'},
-            {'#', '/', '/', ' ', '/', '/', '#'},
-            {'#', '/', '/', ' ', '/', '/', '#'},
-            {'#', '/', '/', '?', '/', '/', '#'},
-            {'#', '#', '#', '#', '#', '#', '#'}
-        };
-        plateau[joueur.pos.i][joueur.pos.y] = joueur.car;
+    String[][] initPlateau(Joueur joueur){
+        CSVFile Niveau = loadCSV("../csv/niveau"+joueur.niveau+".csv", ';');
+        String[][] plateau = new String[rowCount(Niveau)][columnCount(Niveau)];
+        for (int i = 0; i<length(plateau, 1); i++){
+            for (int j = 0; j<length(plateau, 2); j++){
+                plateau[i][j] = getCell(Niveau, i, j);
+            }
+        }
         return plateau;
     }
 
@@ -41,8 +41,8 @@ class Codia extends Program {
     }
 
     // Fonction pour demander les instructions au joueur
-    String[] choixInstructions(char[][] plateau){
-        String[] instructions = new String[20];
+    String[] choixInstructions(String[][] plateau){
+        String[] instructions = new String[50];
         String[] choix = new String[]{"haut", "bas", "droite", "gauche", "fin"};
         int indexChoix = 0;
         int entreeInt = 0;
@@ -82,78 +82,74 @@ class Codia extends Program {
     }
 
     // Déplacement vers le haut
-    boolean haut(char[][] plateau, Joueur joueur){
+    boolean haut(String[][] plateau, Joueur joueur){
         boolean result = false;
-        if (plateau[joueur.pos.i-1][joueur.pos.y] == '#' || 
-            plateau[joueur.pos.i-1][joueur.pos.y] == '/'){
+        if (equals(plateau[joueur.pos.i-1][joueur.pos.y], "#")){
                 result = true;
-        } else if (plateau[joueur.pos.i-1][joueur.pos.y] == '?'){
-            plateau[joueur.pos.i][joueur.pos.y] = ' ';
+        } else if (equals(plateau[joueur.pos.i-1][joueur.pos.y], "?")){
+            plateau[joueur.pos.i][joueur.pos.y] = " ";
             joueur.pos.i += 1;
-            plateau[joueur.pos.i][joueur.pos.y] = '!';
+            plateau[joueur.pos.i][joueur.pos.y] = "!";
         } else {
-            plateau[joueur.pos.i][joueur.pos.y] = ' ';
+            plateau[joueur.pos.i][joueur.pos.y] = " ";
             joueur.pos.i -= 1;
-            plateau[joueur.pos.i][joueur.pos.y] = '@';
+            plateau[joueur.pos.i][joueur.pos.y] = "@";
         }
         return result;
     }
     // Déplacement vers le bas
-    boolean bas(char[][] plateau, Joueur joueur){
+    boolean bas(String[][] plateau, Joueur joueur){
         boolean result = false;
-        if (plateau[joueur.pos.i+1][joueur.pos.y] == '#' || 
-            plateau[joueur.pos.i+1][joueur.pos.y] == '/'){
+        if (equals(plateau[joueur.pos.i+1][joueur.pos.y], "#")){
                 result = true;
-        } else if (plateau[joueur.pos.i+1][joueur.pos.y] == '?'){
-            plateau[joueur.pos.i][joueur.pos.y] = ' ';
+        } else if (equals(plateau[joueur.pos.i+1][joueur.pos.y], "?")){
+            plateau[joueur.pos.i][joueur.pos.y] = " ";
             joueur.pos.i += 1;
-            plateau[joueur.pos.i][joueur.pos.y] = '!';
+            plateau[joueur.pos.i][joueur.pos.y] = "!";
         } else {
-            plateau[joueur.pos.i][joueur.pos.y] = ' ';
+            plateau[joueur.pos.i][joueur.pos.y] = " ";
             joueur.pos.i += 1;
-            plateau[joueur.pos.i][joueur.pos.y] = '@';
+            plateau[joueur.pos.i][joueur.pos.y] = "@";
         }
         return result;
     }
 
     // Déplacement vers la droite
-    boolean droite(char[][] plateau, Joueur joueur){
+    boolean droite(String[][] plateau, Joueur joueur){
         boolean result = false;
-        if (plateau[joueur.pos.i][joueur.pos.y+1] == '#' || 
-            plateau[joueur.pos.i][joueur.pos.y+1] == '/'){
+        if (equals(plateau[joueur.pos.i][joueur.pos.y+1], "#")){
                 result = true;
-        } else if (plateau[joueur.pos.i][joueur.pos.y+1] == '?'){
-            plateau[joueur.pos.i][joueur.pos.y] = ' ';
+        } else if (equals(plateau[joueur.pos.i][joueur.pos.y+1], "?")){
+            plateau[joueur.pos.i][joueur.pos.y] = " ";
             joueur.pos.i += 1;
-            plateau[joueur.pos.i][joueur.pos.y] = '!';
+            plateau[joueur.pos.i][joueur.pos.y] = "!";
         } else {
-            plateau[joueur.pos.i][joueur.pos.y] = ' ';
+            plateau[joueur.pos.i][joueur.pos.y] = " ";
             joueur.pos.y += 1;
-            plateau[joueur.pos.i][joueur.pos.y] = '@';
+            plateau[joueur.pos.i][joueur.pos.y] = "@";
         }
         return result;
     }
 
     // Déplacement vers la gauche
-    boolean gauche(char[][] plateau, Joueur joueur){
+    boolean gauche(String[][] plateau, Joueur joueur){
         boolean result = false;
-        if (plateau[joueur.pos.i][joueur.pos.y-1] == '#' || 
-            plateau[joueur.pos.i][joueur.pos.y-1] == '/'){
+        if (equals(plateau[joueur.pos.i][joueur.pos.y-1], "#")){
                 result = true;
-        } else if (plateau[joueur.pos.i][joueur.pos.y-1] == '?'){
-            plateau[joueur.pos.i][joueur.pos.y] = ' ';
+        } else if (equals(plateau[joueur.pos.i][joueur.pos.y-1], "?")){
+            plateau[joueur.pos.i][joueur.pos.y] = " ";
             joueur.pos.i += 1;
-            plateau[joueur.pos.i][joueur.pos.y] = '!';
+            plateau[joueur.pos.i][joueur.pos.y] = "!";
         } else {
-            plateau[joueur.pos.i][joueur.pos.y] = ' ';
+            plateau[joueur.pos.i][joueur.pos.y] = " ";
             joueur.pos.y -= 1;
-            plateau[joueur.pos.i][joueur.pos.y] = '@';
+            plateau[joueur.pos.i][joueur.pos.y] = "@";
         }
         return result;
     }
 
     // Fonction pour exécuter les fonctions précédentes (choix d'instructions ...)
-    boolean execution(char[][] plateau, Joueur joueur, String[] instructions){
+    boolean execution(String[][] plateau, Joueur joueur, String[] instructions){
         int indexInstructions = 0;
         boolean dead = false;
         boolean win = false;
@@ -178,7 +174,7 @@ class Codia extends Program {
             }
             indexInstructions++;
         }
-        if (plateau[joueur.pos.i][joueur.pos.y] == '!'){
+        if (equals(plateau[joueur.pos.i][joueur.pos.y], "!")){
             win = true;
         }
         return win;
@@ -198,16 +194,24 @@ class Codia extends Program {
     // Fontion principale
     void algorithm(){
         Joueur joueur = initJoueur(1, 1);
-        char[][] plateau = initPlateau(joueur);
+        String[][] plateau = initPlateau(joueur);
         clearScreen();
         afficherRegles(joueur);
-        String[] instructions = choixInstructions(plateau);
-        clearScreen();
-        boolean result = execution(plateau, joueur, instructions);
-        if (result){
-            println("Bien joue tu as gagne !");
-        } else {
-            println("Dommage, tu as perdu, retente ta chance !");
-        }
+        boolean result = true;
+        do {
+            plateau = initPlateau(joueur);
+            String[] instructions = choixInstructions(plateau);
+            clearScreen();
+            result = execution(plateau, joueur, instructions);
+            if (result){
+                println("Bien joue, tu passes au prochaine niveau ! Bonne chance !");
+                joueur.niveau++;
+                joueur.pos.i = 1;
+                joueur.pos.y = 1;
+            } else {
+                println("Dommage, tu as perdu, retente ta chance !");
+            }
+            delay(2000);
+        } while (result);
     }
 }
