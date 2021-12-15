@@ -3,6 +3,17 @@ import extensions.CSVFile;
 class Codia extends Program {
     final char mur = '#';
     final char arrivee = '?';
+    //les couleur
+    final String ANSI_RESET = "\u001B[0m";
+    final String ANSI_BLACK = "\u001B[30m";
+    final String ANSI_RED = "\u001B[31m";
+    final String ANSI_GREEN = "\u001B[32m";
+    final String ANSI_YELLOW = "\u001B[33m";
+    final String ANSI_BLUE = "\u001B[34m";
+    final String ANSI_PURPLE = "\u001B[35m";
+    final String ANSI_CYAN = "\u001B[36m";
+    final String ANSI_WHITE = "\u001B[37m";
+
 
     // Affiche un tableau à 2 dimensions
     void println(String[][] tab){
@@ -42,7 +53,7 @@ class Codia extends Program {
     // Fonction pour demander les instructions au joueur
     String[] choixInstructions(String[][] plateau){
         String[] instructions = new String[50];
-        String[] choix = new String[]{"haut", "bas", "droite", "gauche", "fin"};
+        String[] choix = new String[]{"haut", "bas", "droite", "gauche", "for", "fin"};
         int indexChoix = 0;
         int entreeInt = 0;
         do {
@@ -53,7 +64,26 @@ class Codia extends Program {
             afficherChoix(choix);
             print("Votre choix : ");
             entreeInt = readInt();
-            instructions[indexChoix] = choix[entreeInt-1];
+            if (equals(choix[entreeInt-1],"for")){
+                String for_in = "for(";
+                println("nombre de repetition ?");
+                for_in += readInt();
+                for_in += ") |";
+                int entree_for;
+                do{
+                    clearScreen(); println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+                    println(plateau);
+                    afficherChoix(choix);
+                    println("\n");
+                    println(for_in);
+                    print("Votre choix : ");
+                    entree_for = readInt();
+                    for_in += choix[entree_for-1]+"|"; 
+                }while(!equals(choix[entree_for-1],"fin"));
+                instructions[indexChoix] = for_in;
+            }else{
+                instructions[indexChoix] = choix[entreeInt-1];
+            }
             indexChoix++;
         } while (!equals(choix[entreeInt-1], "fin"));
         return instructions;
@@ -145,6 +175,11 @@ class Codia extends Program {
             plateau[joueur.pos.i][joueur.pos.y] = "@";
         }
         return result;
+    }
+
+    boolean for_inst(String[][] plateau, Joueur joueur, String for_in){
+        
+        return false;
     }
 
     // Fonction pour exécuter les fonctions précédentes (choix d'instructions ...)
