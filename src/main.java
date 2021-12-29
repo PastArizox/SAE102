@@ -1,18 +1,13 @@
 import extensions.CSVFile;
+import extensions.RGBColor;
 
 class Codia extends Program {
     final char mur = '#';
     final char arrivee = '?';
-    //les couleur
-    final String ANSI_RESET = "\u001B[0m";
-    final String ANSI_BLACK = "\u001B[30m";
-    final String ANSI_RED = "\u001B[31m";
-    final String ANSI_GREEN = "\u001B[32m";
-    final String ANSI_YELLOW = "\u001B[33m";
-    final String ANSI_BLUE = "\u001B[34m";
-    final String ANSI_PURPLE = "\u001B[35m";
-    final String ANSI_CYAN = "\u001B[36m";
-    final String ANSI_WHITE = "\u001B[37m";
+    final RGBColor RED = RGBColor.RED;
+    final RGBColor WHITE = RGBColor.WHITE;
+    final RGBColor GREEN = RGBColor.GREEN;
+    final RGBColor PURPLE = RGBColor.PURPLE;
 
 
     // Affiche un tableau à 2 dimensions
@@ -20,11 +15,27 @@ class Codia extends Program {
         String result = "";
         for (int i = 0; i<length(tab, 1); i++){
             for (int j = 0; j<length(tab, 2); j++){
-                result += tab[i][j] + " ";
+                switch (tab[i][j]){
+                    case "#":
+                        text(RED.name);
+                        print(tab[i][j]+" ");
+                        break;
+                    case "@":
+                        text(WHITE.name);
+                        print(tab[i][j]+" ");
+                        break;
+                    case "?":
+                        text(GREEN.name);
+                        print(tab[i][j]+" ");
+                        break;
+                    default:
+                        print("  ");
+                        break;
+                }
             }
-            result += "\n";
+            print("\n");
         }
-        println(result);
+        print("\n\n\n");
     }
 
     // Initialise un tableau à 2 dimensions avec des caractères
@@ -62,6 +73,7 @@ class Codia extends Program {
             afficherInstructions(instructions);
             println("\n");
             afficherChoix(choix);
+            text(PURPLE.name);
             print("Votre choix : ");
             entreeInt = readInt();
             if (equals(choix[entreeInt-1],"for")){
@@ -91,23 +103,34 @@ class Codia extends Program {
 
     // Fonction pour afficher les instructions choisies par le joueur
     void afficherInstructions(String[] instructions){
-        String result = "Instructions : {";
+        text(PURPLE.name);
+        print("Instructions : {");
         for (int i = 0; i<length(instructions); i++){
             if (instructions[i] != null){
-                result += instructions[i] + ";";
+                text(GREEN.name);
+                print(instructions[i]);
+                text(PURPLE.name);
+                print(";");
             }
         }
-        result += "}";
-        println(result);
+        print("}");
     }
 
     // Affiche les instructions disponibles
     void afficherChoix(String[] choix){
-        String result = "Choisir une instruction : \n\n";
+        text(PURPLE.name);
+        print("Choisir une instruction : \n\n");
         for (int i = 0; i<length(choix); i++){
-            result += "  [" + (i+1) + "] - " + choix[i] + "\n";
+            text(PURPLE.name);
+            print("  [");
+            text(GREEN.name);
+            print(i+1);
+            text(PURPLE.name);
+            print("] - ");
+            text(GREEN.name);
+            print(choix[i] + "\n");
         }
-        println(result);
+        print("\n");
     }
 
     // Déplacement vers le haut
@@ -126,6 +149,7 @@ class Codia extends Program {
         }
         return result;
     }
+
     // Déplacement vers le bas
     boolean bas(String[][] plateau, Joueur joueur){
         boolean result = false;
