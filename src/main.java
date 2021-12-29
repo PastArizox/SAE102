@@ -2,8 +2,10 @@ import extensions.CSVFile;
 import extensions.RGBColor;
 
 class Codia extends Program {
+    // Initialise les variables globales
     final char mur = '#';
     final char arrivee = '?';
+    // Initialise les couleurs
     final RGBColor RED = RGBColor.RED;
     final RGBColor WHITE = RGBColor.WHITE;
     final RGBColor GREEN = RGBColor.GREEN;
@@ -38,7 +40,7 @@ class Codia extends Program {
         print("\n\n\n");
     }
 
-    // Initialise un tableau à 2 dimensions avec des caractères
+    // Initialise un tableau à 2 dimensions avec des caractères (en string)
     String[][] initPlateau(Joueur joueur){
         CSVFile Niveau = loadCSV("../csv/niveau"+joueur.niveau+".csv", ';');
         String[][] plateau = new String[rowCount(Niveau)][columnCount(Niveau)];
@@ -249,7 +251,7 @@ class Codia extends Program {
         readString();
     }
 
-    // Fontion principale
+    // Fonction principale
     void algorithm(){
         Joueur joueur = initJoueur(1, 1);
         String[][] plateau = initPlateau(joueur);
