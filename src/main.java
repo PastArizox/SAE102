@@ -1,30 +1,44 @@
 import extensions.CSVFile;
+import extensions.RGBColor;
 
 class Codia extends Program {
     final char mur = '#';
     final char arrivee = '?';
     //les couleur
-    final String ANSI_RESET = "\u001B[0m";
-    final String ANSI_BLACK = "\u001B[30m";
-    final String ANSI_RED = "\u001B[31m";
-    final String ANSI_GREEN = "\u001B[32m";
-    final String ANSI_YELLOW = "\u001B[33m";
-    final String ANSI_BLUE = "\u001B[34m";
-    final String ANSI_PURPLE = "\u001B[35m";
-    final String ANSI_CYAN = "\u001B[36m";
-    final String ANSI_WHITE = "\u001B[37m";
+    final String green = RGBColor.GREEN.name;
+    final String red = RGBColor.RED.name;
+    final String purple = RGBColor.PURPLE.name;
+    final String white = RGBColor.WHITE.name;
+    final String black = RGBColor.BLACK.name;
 
 
     // Affiche un tableau à 2 dimensions
     void println(String[][] tab){
-        String result = "";
         for (int i = 0; i<length(tab, 1); i++){
             for (int j = 0; j<length(tab, 2); j++){
-                result += tab[i][j] + " ";
+                switch (tab[i][j]){
+                    case "?":
+                        text(green);
+                        print(tab[i][j]);
+                        break;
+                    case "@":
+                        text(white);
+                        print(tab[i][j]);
+                        break;
+                    case "#":
+                        text(red);
+                        print(tab[i][j]);
+                        break;
+                    default:
+                        text(black);
+                        print(tab[i][j]);
+                        break;
+                }
+                print(" ");
             }
-            result += "\n";
+            print("\n");
         }
-        println(result);
+        print("\n\n");
     }
 
     // Initialise un tableau à 2 dimensions avec des caractères
@@ -93,23 +107,35 @@ class Codia extends Program {
 
     // Fonction pour afficher les instructions choisies par le joueur
     void afficherInstructions(String[] instructions){
-        String result = "Instructions : {";
+        text(purple);
+        print("Instructions : {");
         for (int i = 0; i<length(instructions); i++){
             if (instructions[i] != null){
-                result += instructions[i] + ";";
+                text(green);
+                print(instructions[i]);
+                text(purple);
+                print(";");
             }
         }
-        result += "}";
-        println(result);
+        print("}");
     }
 
     // Affiche les instructions disponibles
     void afficherChoix(String[] choix){
-        String result = "Choisir une instruction : \n\n";
+        text(purple);
+        print("Choisir une instruction : \n\n");
         for (int i = 0; i<length(choix); i++){
-            result += "  [" + (i+1) + "] - " + choix[i] + "\n";
+            text(purple);
+            print("  [");
+            text(green);
+            print(i+1);
+            text(purple);
+            print("] - ");
+            text(green);
+            print(choix[i] + "\n");
         }
-        println(result);
+        text(purple);
+        print("\n");
     }
 
     // Déplacement vers le haut
@@ -244,7 +270,6 @@ class Codia extends Program {
                     }
                     break;
             }
-            println(joueur.pos.i + " | " + joueur.pos.y);
             indexInstructions++;
         }
         // if (equals(plateau[joueur.pos.i][joueur.pos.y], "!")){
@@ -255,6 +280,7 @@ class Codia extends Program {
 
     // Affichage des règles
     void afficherRegles(Joueur joueur){
+        text(purple);
         println("Bonjour, " + joueur.pseudo + " ! Bienvenue dans Codia !\n");
         println("Le but du jeu est tres simple.");
         println("Le '" + joueur.car + "' represente ton joueur.");
@@ -278,14 +304,17 @@ class Codia extends Program {
             execution(plateau, joueur, instructions);
             if (equals(plateau[joueur.pos.i][joueur.pos.y], "!")){
                 if (joueur.niveau < length(getAllFilesFromDirectory("../csv"))){
+                    text(purple);
                     println("Bien joue, tu passes au prochaine niveau ! Bonne chance !");
                 } else {
+                    text(purple);
                     println("Tu as fini tous les niveaux du jeu, bien joue !");
                 }
                 joueur.niveau++;
                 joueur.pos.i = 1;
                 joueur.pos.y = 1;
             } else {
+                text(purple);
                 println("Dommage, tu as perdu, retente ta chance !");
                 joueur.pos.i = 1;
                 joueur.pos.y = 1;
