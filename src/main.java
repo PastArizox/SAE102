@@ -1,15 +1,18 @@
 import extensions.CSVFile;
-import extensions.RGBColor;
 
 class Codia extends Program {
-    // Initialise les variables globales
     final char mur = '#';
     final char arrivee = '?';
-    // Initialise les couleurs
-    final RGBColor RED = RGBColor.RED;
-    final RGBColor WHITE = RGBColor.WHITE;
-    final RGBColor GREEN = RGBColor.GREEN;
-    final RGBColor PURPLE = RGBColor.PURPLE;
+    //les couleur
+    final String ANSI_RESET = "\u001B[0m";
+    final String ANSI_BLACK = "\u001B[30m";
+    final String ANSI_RED = "\u001B[31m";
+    final String ANSI_GREEN = "\u001B[32m";
+    final String ANSI_YELLOW = "\u001B[33m";
+    final String ANSI_BLUE = "\u001B[34m";
+    final String ANSI_PURPLE = "\u001B[35m";
+    final String ANSI_CYAN = "\u001B[36m";
+    final String ANSI_WHITE = "\u001B[37m";
 
 
     // Affiche un tableau à 2 dimensions
@@ -17,30 +20,14 @@ class Codia extends Program {
         String result = "";
         for (int i = 0; i<length(tab, 1); i++){
             for (int j = 0; j<length(tab, 2); j++){
-                switch (tab[i][j]){
-                    case "#":
-                        text(RED.name);
-                        print(tab[i][j]+" ");
-                        break;
-                    case "@":
-                        text(WHITE.name);
-                        print(tab[i][j]+" ");
-                        break;
-                    case "?":
-                        text(GREEN.name);
-                        print(tab[i][j]+" ");
-                        break;
-                    default:
-                        print("  ");
-                        break;
-                }
+                result += tab[i][j] + " ";
             }
-            print("\n");
+            result += "\n";
         }
-        print("\n\n\n");
+        println(result);
     }
 
-    // Initialise un tableau à 2 dimensions avec des caractères (en string)
+    // Initialise un tableau à 2 dimensions avec des caractères
     String[][] initPlateau(Joueur joueur){
         CSVFile Niveau = loadCSV("../csv/niveau"+joueur.niveau+".csv", ';');
         String[][] plateau = new String[rowCount(Niveau)][columnCount(Niveau)];
@@ -75,7 +62,6 @@ class Codia extends Program {
             afficherInstructions(instructions);
             println("\n");
             afficherChoix(choix);
-            text(PURPLE.name);
             print("Votre choix : ");
             entreeInt = readInt();
             if (equals(choix[entreeInt-1],"for")){
@@ -95,6 +81,8 @@ class Codia extends Program {
                     for_in += choix[entree_for-1]+"|"; 
                 }while(!equals(choix[entree_for-1],"fin"));
                 instructions[indexChoix] = for_in;
+
+                
             }else{
                 instructions[indexChoix] = choix[entreeInt-1];
             }
@@ -105,34 +93,23 @@ class Codia extends Program {
 
     // Fonction pour afficher les instructions choisies par le joueur
     void afficherInstructions(String[] instructions){
-        text(PURPLE.name);
-        print("Instructions : {");
+        String result = "Instructions : {";
         for (int i = 0; i<length(instructions); i++){
             if (instructions[i] != null){
-                text(GREEN.name);
-                print(instructions[i]);
-                text(PURPLE.name);
-                print(";");
+                result += instructions[i] + ";";
             }
         }
-        print("}");
+        result += "}";
+        println(result);
     }
 
     // Affiche les instructions disponibles
     void afficherChoix(String[] choix){
-        text(PURPLE.name);
-        print("Choisir une instruction : \n\n");
+        String result = "Choisir une instruction : \n\n";
         for (int i = 0; i<length(choix); i++){
-            text(PURPLE.name);
-            print("  [");
-            text(GREEN.name);
-            print(i+1);
-            text(PURPLE.name);
-            print("] - ");
-            text(GREEN.name);
-            print(choix[i] + "\n");
+            result += "  [" + (i+1) + "] - " + choix[i] + "\n";
         }
-        print("\n");
+        println(result);
     }
 
     // Déplacement vers le haut
@@ -151,7 +128,6 @@ class Codia extends Program {
         }
         return result;
     }
-
     // Déplacement vers le bas
     boolean bas(String[][] plateau, Joueur joueur){
         boolean result = false;
@@ -203,9 +179,31 @@ class Codia extends Program {
         return result;
     }
 
+    void stringToTable(String[] for_tab, String for_S){
+        //prend seulement les instruction donc pas le for(x)
+        int index = 1;
+        int index_tab = 0;
+        while (index < length(for_S) && index_tab < length(for_tab)){
+            if (charAt(for_S,index) == '|'){
+                for_tab[index_tab] = substring(for_S,1,index);
+                index_tab += 1;
+                for_S = substring(for_S,index-1, length(for_S));
+                index = 0;
+            }
+            index += 1;
+        }
+    }
+
     boolean for_inst(String[][] plateau, Joueur joueur, String for_in){
-        
-        return false;
+        String[] instructions = new String[50];
+        stringToTable(instructions, substring(for_in, 7, length(for_in)));
+        boolean dead = false;
+        int c = charAt(for_in, 4) - 48;
+        while (c> 0 && ! dead){
+            dead = execution(plateau, joueur, instructions);
+            c -= 1;
+        }
+        return dead;
     }
 
     // Fonction pour exécuter les fonctions précédentes (choix d'instructions ...)
@@ -213,31 +211,46 @@ class Codia extends Program {
         int indexInstructions = 0;
         boolean dead = false;
         boolean win = false;
-        while (instructions[indexInstructions] != null && !dead){
+        while (instructions[indexInstructions] != null && !dead && !equals(instructions[indexInstructions], "")){
             println(plateau);
-            delay(500);
-            clearScreen();
+            // delay(2000);
+            // clearScreen();
             String instruction = instructions[indexInstructions];
             switch (instruction){
                 case "haut":
+                    delay(500);
+                    clearScreen();
                     dead = haut(plateau, joueur);
                     break;
                 case "bas":
+                    delay(500);
+                    clearScreen();
                     dead = bas(plateau, joueur);
                     break;
                 case "droite":
+                    delay(500);
+                    clearScreen();
                     dead = droite(plateau, joueur);
                     break;
                 case "gauche":
+                    delay(500);
+                    clearScreen();
                     dead = gauche(plateau, joueur);
                     break;
+                default:
+                    clearScreen();
+                    if (equals(substring(instruction, 0, 3), "for")){
+                        dead = for_inst(plateau, joueur, instruction);
+                    }
+                    break;
             }
+            println(joueur.pos.i + " | " + joueur.pos.y);
             indexInstructions++;
         }
-        if (equals(plateau[joueur.pos.i][joueur.pos.y], "!")){
-            win = true;
-        }
-        return win;
+        // if (equals(plateau[joueur.pos.i][joueur.pos.y], "!")){
+        //     win = true;
+        // }
+        return dead;
     }
 
     // Affichage des règles
@@ -251,7 +264,7 @@ class Codia extends Program {
         readString();
     }
 
-    // Fonction principale
+    // Fontion principale
     void algorithm(){
         Joueur joueur = initJoueur(1, 1);
         String[][] plateau = initPlateau(joueur);
@@ -262,8 +275,8 @@ class Codia extends Program {
             plateau = initPlateau(joueur);
             String[] instructions = choixInstructions(plateau);
             clearScreen();
-            result = execution(plateau, joueur, instructions);
-            if (result){
+            execution(plateau, joueur, instructions);
+            if (equals(plateau[joueur.pos.i][joueur.pos.y], "!")){
                 if (joueur.niveau < length(getAllFilesFromDirectory("../csv"))){
                     println("Bien joue, tu passes au prochaine niveau ! Bonne chance !");
                 } else {
@@ -274,6 +287,8 @@ class Codia extends Program {
                 joueur.pos.y = 1;
             } else {
                 println("Dommage, tu as perdu, retente ta chance !");
+                joueur.pos.i = 1;
+                joueur.pos.y = 1;
             }
             delay(2000);
         } while (result && joueur.niveau <= length(getAllFilesFromDirectory("../csv")));
