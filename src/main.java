@@ -68,6 +68,7 @@ class Codia extends Program {
     String[] choixInstructions(String[][] plateau){
         String[] instructions = new String[50];
         String[] choix = new String[]{"haut", "bas", "droite", "gauche", "for", "fin"};
+        String[] choix_for = new String[]{"haut", "bas", "droite", "gauche", "fin"};
         int indexChoix = 0;
         int entreeInt = 0;
         do {
@@ -87,13 +88,13 @@ class Codia extends Program {
                 do{
                     clearScreen(); println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
                     println(plateau);
-                    afficherChoix(choix);
+                    afficherChoix(choix_for);
                     println("\n");
                     println(for_in);
                     print("Votre choix : ");
                     entree_for = readInt();
-                    for_in += choix[entree_for-1]+"|"; 
-                }while(!equals(choix[entree_for-1],"fin"));
+                    for_in += choix_for[entree_for-1]+"|"; 
+                }while(!equals(choix_for[entree_for-1],"fin"));
                 instructions[indexChoix] = for_in;
 
                 
