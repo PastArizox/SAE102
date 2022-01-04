@@ -106,6 +106,15 @@ class Codia extends Program {
         return instructions;
     }
 
+    int toInt(String nombre){
+        int rep = 0;
+        for (int i = 0; i< length(nombre);i++){
+            rep = rep *10;
+            rep += (int)(charAt(nombre,i) - 48);
+        }
+        return rep;
+    }
+
     // Fonction pour afficher les instructions choisies par le joueur
     void afficherInstructions(String[] instructions){
         text(purple);
@@ -291,9 +300,70 @@ class Codia extends Program {
         readString();
     }
 
+    void checkJoueur(Joueur joueur){
+        CSVFile JoueursCSV = loadCSV("../csv/players.csv", ';');
+        if (rowCount(JoueursCSV) > 0){
+            String[][] Joueurs = new String[rowCount(JoueursCSV)][columnCount(JoueursCSV)];
+            for (int i = 0; i<length(Joueurs, 1); i++){
+                for (int j = 0; j<length(Joueurs, 2); j++){
+                    Joueurs[i][j] = getCell(JoueursCSV, i, j);
+                }
+            }
+
+            for (int i = 0; i<rowCount(JoueursCSV); i++){
+                if (equals(joueur.pseudo, Joueurs[i][0])){
+                    joueur.niveau = toInt(Joueurs[i][1]);
+                }
+            }
+        }
+    }
+
+    void save(Joueur joueur){
+        boolean isIn = false;
+        CSVFile JoueursCSV = loadCSV("../csv/players.csv", ';');
+        for (int i = 0; i<rowCount(JoueursCSV); i++){
+            for (int j = 0; j<columnCount(JoueursCSV); j++){
+                if (equals(getCell(JoueursCSV, i, 0), joueur.pseudo)){
+                    isIn = true;
+                }
+            }
+        }
+
+        if (isIn){
+            String[][] Joueurs = new String[rowCount(JoueursCSV)][columnCount(JoueursCSV)];
+            for (int i = 0; i<length(Joueurs, 1); i++){
+                for (int j = 0; j<length(Joueurs, 2); j++){
+                    Joueurs[i][j] = getCell(JoueursCSV, i, j);
+                    if (equals(getCell(JoueursCSV, i, 0), joueur.pseudo)){
+                        Joueurs[i][1] = joueur.niveau + "";
+                    }
+                }
+            }
+            saveCSV(Joueurs, "../csv/players.csv", ';') ;
+        }else {
+            if (rowCount(JoueursCSV) > 0){
+                String[][] Joueurs = new String[rowCount(JoueursCSV)+1][columnCount(JoueursCSV)];
+                for (int i = 0; i<length(Joueurs, 1); i++){
+                    for (int j = 0; j<length(Joueurs, 2); j++){
+                        Joueurs[i][j] = getCell(JoueursCSV, i, j);
+                    }
+                }
+                Joueurs[rowCount(JoueursCSV)+1][0] = joueur.pseudo + "";
+                Joueurs[rowCount(JoueursCSV)+1][1] = joueur.niveau + "";
+                saveCSV(Joueurs, "../csv/players.csv", ';') ;
+            } else {
+                String[][] Joueurs = new String[1][2];
+                Joueurs[0][0] = joueur.pseudo + "";
+                Joueurs[0][1] = joueur.niveau + "";
+                saveCSV(Joueurs, "../csv/players.csv", ';') ;
+            }
+        }
+    }
+
     // Fontion principale
     void algorithm(){
         Joueur joueur = initJoueur(1, 1);
+        checkJoueur(joueur);
         String[][] plateau = initPlateau(joueur);
         clearScreen();
         afficherRegles(joueur);
@@ -312,6 +382,7 @@ class Codia extends Program {
                     println("Tu as fini tous les niveaux du jeu, bien joue !");
                 }
                 joueur.niveau++;
+                save(joueur);
                 joueur.pos.i = 1;
                 joueur.pos.y = 1;
             } else {
