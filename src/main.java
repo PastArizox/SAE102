@@ -42,12 +42,19 @@ class Codia extends Program {
     }
 
     // Initialise un tableau à 2 dimensions avec des caractères
-    String[][] initPlateau(Joueur joueur){
+    String[][] initPlateau(Joueur joueur, Levier[] liste){
+        int compteur = 0;
         CSVFile Niveau = loadCSV("../csv/niveau"+joueur.niveau+".csv", ';');
         String[][] plateau = new String[rowCount(Niveau)][columnCount(Niveau)];
         for (int i = 0; i<length(plateau, 1); i++){
             for (int j = 0; j<length(plateau, 2); j++){
-                plateau[i][j] = getCell(Niveau, i, j);
+                if (plateau[i][j] == null){
+                    if (charAt(getCell(Niveau,i,j),0) =='l'){
+                        liste[compteur] = init_Levier(getCell(Niveau,i,j), i,j);
+                        compteur += 1;
+                    }
+                    plateau[i][j] = getCell(Niveau, i, j);
+                }
             }
         }
         return plateau;
@@ -105,6 +112,82 @@ class Codia extends Program {
         } while (!equals(choix[entreeInt-1], "fin"));
         return instructions;
     }
+
+
+    int toInt(String nombre){
+        int rep = 0;
+        for (int i = 0; i< length(nombre);i++){
+            rep = rep *10;
+            rep += (int)(charAt(nombre,i) - 48);
+        }
+        return rep;
+    }
+
+    Piston init_Piston(Position iy, boolean actif){
+        Piston piston = new Piston();
+        piston.pos = iy;
+        piston.est_active = actif;
+        return piston;
+    }
+
+    Levier init_Levier(String base, int i, int y){
+        int compteur = 0;
+        Levier levier = new Levier();
+        levier.est_active = false;
+        Position pos_l = new Position();
+        pos_l.i = i;
+        pos_l.y = y;
+        levier.pos = pos_l;
+        int c = 2;
+        while (c<length(base)){
+            int x, z;
+            if ( charAt(base, c) == '/'){
+                if (charAt(base, c+2) != ','){
+                    x = toInt(substring(base,c+1,c+3));
+                    c += 3;
+                }else{
+                    x = toInt(substring(base,c+1, c+2));
+                    c += 2;
+                }
+                if (c+2 < length(base) && charAt(base,c+2) == ' '){
+                    z = toInt(substring(base,c+1, c+2));
+                    c += 2;
+                }else{
+                    z = toInt(substring(base,c+1, c+3));
+                    c += 3;
+                }
+                Position pos_p = new Position();
+                pos_p.i = x;
+                pos_p.y = z;
+                levier.piston[compteur] = init_Piston(pos_p, true);
+                compteur += 1;
+            }
+            if ( charAt(base, c) == '\\'){
+                if (charAt(base, c+2) != ','){
+                    x = toInt(substring(base,c+1,c+3));
+                    c += 3;
+                }else{
+                    x = toInt(substring(base,c+1, c+2));
+                    c += 2;
+                }
+                if (c+2 < length(base) && charAt(base,c+2) == ' '){
+                    z = toInt(substring(base,c+1, c+2));
+                    c += 2;
+                }else{
+                    z = toInt(substring(base,c+1, c+3));
+                    c += 3;
+                }
+                Position pos_p = new Position();
+                pos_p.i = x;
+                pos_p.y = z;
+                levier.piston[compteur] = init_Piston(pos_p, false);
+                compteur += 1;
+            }
+            c += 1;
+        }
+        return levier;
+    }
+
 
     // Fonction pour afficher les instructions choisies par le joueur
     void afficherInstructions(String[] instructions){
@@ -294,12 +377,24 @@ class Codia extends Program {
     // Fontion principale
     void algorithm(){
         Joueur joueur = initJoueur(1, 1);
-        String[][] plateau = initPlateau(joueur);
+        Levier[] liste_levier = new Levier[50];
+        String[][] plateau = initPlateau(joueur, liste_levier);
+        int c = 0;
+        while (liste_levier[c] != null){
+            int i = 0;
+            while (liste_levier[c].piston[i] != null){
+                if (! liste_levier[c].piston[i].est_active){
+                    plateau[liste_levier[c].piston[i].pos.i][liste_levier[c].piston[i].pos.y] = " ";
+                }
+                i += 1;
+            }
+            c += 1;
+        }
         clearScreen();
         afficherRegles(joueur);
         boolean result = true;
         do {
-            plateau = initPlateau(joueur);
+            //plateau = initPlateau(joueur);
             String[] instructions = choixInstructions(plateau);
             clearScreen();
             execution(plateau, joueur, instructions);
