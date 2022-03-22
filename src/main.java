@@ -2,15 +2,103 @@ import extensions.CSVFile;
 import extensions.RGBColor;
 
 class Codia extends Program {
-    final char mur = '#';
-    final char arrivee = '?';
-    //les couleur
+    final String[] authors = new String[]{"Marache Bastien", "Hessel Aymeric"};
     final String green = RGBColor.GREEN.name;
     final String red = RGBColor.RED.name;
+    final String blue = RGBColor.BLUE.name;
     final String purple = RGBColor.PURPLE.name;
     final String white = RGBColor.WHITE.name;
     final String black = RGBColor.BLACK.name;
 
+/*
+=====================================================================================================================
+MENUS
+=====================================================================================================================
+*/
+
+    void showCodia(){
+        CSVFile CodiaCSV = loadCSV("../csv/Codia.csv", ';');
+        String[][] Codia = new String[rowCount(CodiaCSV)][columnCount(CodiaCSV)];
+        text(blue);
+        for (int i = 0; i<length(Codia, 1); i++){
+            for (int j = 0; j<length(Codia, 2); j++){
+                print(getCell(CodiaCSV, i, j));
+            }
+            println();
+        }
+        print("\n\n\n\n");
+    }
+
+    void showMenus(String[] menus){
+        for (int i = 0; i<length(menus); i++){
+            text(purple);
+            print("    [");
+            text(green);
+            print(i+1);
+            text(purple);
+            print("] - ");
+            text(green);
+            println(menus[i] + "\n");
+        }
+        print("\n\n");
+        text(white);
+    }
+
+    // Fontion principale
+    void algorithm(){
+        String[] menus = new String[]{"Jouer", "Regles", "Credits", "Quitter"};
+        boolean running = true;
+        int choix;
+        while (running){
+            clearScreen();
+            showCodia();
+            showMenus(menus);
+            text(green);
+            print("Votre choix : "); text(red);
+            choix = readInt(); text(green);
+            while(choix < 1 || choix > length(menus)){
+                println("Veuillez choisir un chiffre valide (entre 1 et "+length(menus)+")");
+                print("Votre choix : "); text(red);
+                choix = readInt(); text(green);
+            }
+            switch (choix){
+                case 1:
+                    play();
+                    break;
+                case 2:
+                    afficherRegles();
+                    break;
+                case 3:
+                    credits();
+                    break;
+                case 4:
+                    running = false;
+                    clearScreen();
+                    break;
+            }
+        }
+        text(white);
+    }
+
+/*
+=====================================================================================================================
+PLAYING
+=====================================================================================================================
+*/
+
+    // Initialise le joueur et sa position
+    Joueur initJoueur(int i, int y){
+        Joueur joueur = new Joueur();
+        text(green);
+        print("Choisissez votre pseudo : ");
+        text(red);
+        joueur.pseudo = readString();
+        joueur.pos = new Position();
+        joueur.pos.i = i;
+        joueur.pos.y = y;
+        text(white);
+        return joueur;
+    }
 
     // Affiche un tableau à 2 dimensions
     void println(String[][] tab){
@@ -53,17 +141,6 @@ class Codia extends Program {
         return plateau;
     }
 
-    // Initialise le joueur et sa position
-    Joueur initJoueur(int i, int y){
-        Joueur joueur = new Joueur();
-        print("Choisissez votre pseudo : ");
-        joueur.pseudo = readString();
-        joueur.pos = new Position();
-        joueur.pos.i = i;
-        joueur.pos.y = y;
-        return joueur;
-    }
-
     // Fonction pour demander les instructions au joueur
     String[] choixInstructions(String[][] plateau){
         String[] instructions = new String[50];
@@ -72,53 +149,57 @@ class Codia extends Program {
         int indexChoix = 0;
         int entreeInt = 0;
         do {
-            clearScreen(); println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+            clearScreen();// println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
             println(plateau);
             afficherInstructions(instructions);
-            println("\n");
             afficherChoix(choix);
-            print("Votre choix : ");
-            entreeInt = readInt();
+
+            text(green);
+            print("Votre choix : "); text(red);
+            entreeInt = readInt(); text(green);
+            while(entreeInt < 1 || entreeInt > length(choix)){
+                println("Veuillez choisir un chiffre valide (entre 1 et "+length(choix)+")");
+                print("Votre choix : "); text(red);
+                entreeInt = readInt(); text(green);
+            }
+
             if (equals(choix[entreeInt-1],"for")){
-                String for_in = "for(";
-                println("nombre de repetition ?");
-                for_in += readInt();
-                for_in += ") |";
-                int entree_for;
+                print("Entre un nombre de repetition : "); text(red);
+                String for_in = "for("; for_in += readInt(); for_in += ") |";
+                int entree_for = 0;
                 do{
-                    clearScreen(); println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+                    clearScreen();// println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
                     println(plateau);
+                    afficherInstructions(instructions);
                     afficherChoix(choix_for);
-                    println("\n");
-                    println(for_in);
-                    print("Votre choix : ");
-                    entree_for = readInt();
+                    text(green);
+                    println(for_in + "\n");
+                    
+                    print("Votre choix : "); text(red);
+                    entree_for = readInt(); text(green);
+                    while(entree_for < 1 || entree_for > length(choix_for)){
+                        println("Veuillez choisir un chiffre valide (entre 1 et "+length(choix_for)+")");
+                        print("Votre choix : "); text(red);
+                        entree_for = readInt(); text(green);
+                    }
+
                     for_in += choix_for[entree_for-1]+"|"; 
                 }while(!equals(choix_for[entree_for-1],"fin"));
                 instructions[indexChoix] = for_in;
-
-                
-            }else{
+            }
+            else{
                 instructions[indexChoix] = choix[entreeInt-1];
             }
+
             indexChoix++;
         } while (!equals(choix[entreeInt-1], "fin"));
         return instructions;
     }
 
-    int toInt(String nombre){
-        int rep = 0;
-        for (int i = 0; i< length(nombre);i++){
-            rep = rep *10;
-            rep += (int)(charAt(nombre,i) - 48);
-        }
-        return rep;
-    }
-
     // Fonction pour afficher les instructions choisies par le joueur
     void afficherInstructions(String[] instructions){
-        text(purple);
-        print("Instructions : {");
+        text(green);
+        print("Instructions : "); text(purple); print("{");
         for (int i = 0; i<length(instructions); i++){
             if (instructions[i] != null){
                 text(green);
@@ -127,13 +208,14 @@ class Codia extends Program {
                 print(";");
             }
         }
-        print("}");
+        println("}\n");
+        text(white);
     }
 
     // Affiche les instructions disponibles
     void afficherChoix(String[] choix){
-        text(purple);
-        print("Choisir une instruction : \n\n");
+        text(green);
+        println("Choisir une instruction :\n");
         for (int i = 0; i<length(choix); i++){
             text(purple);
             print("  [");
@@ -144,8 +226,8 @@ class Codia extends Program {
             text(green);
             print(choix[i] + "\n");
         }
-        text(purple);
         print("\n");
+        text(white);
     }
 
     // Déplacement vers le haut
@@ -215,21 +297,6 @@ class Codia extends Program {
         return result;
     }
 
-    void stringToTable(String[] for_tab, String for_S){
-        //prend seulement les instruction donc pas le for(x)
-        int index = 1;
-        int index_tab = 0;
-        while (index < length(for_S) && index_tab < length(for_tab)){
-            if (charAt(for_S,index) == '|'){
-                for_tab[index_tab] = substring(for_S,1,index);
-                index_tab += 1;
-                for_S = substring(for_S,index-1, length(for_S));
-                index = 0;
-            }
-            index += 1;
-        }
-    }
-
     boolean for_inst(String[][] plateau, Joueur joueur, String for_in){
         String[] instructions = new String[50];
         stringToTable(instructions, substring(for_in, 7, length(for_in)));
@@ -249,8 +316,6 @@ class Codia extends Program {
         boolean win = false;
         while (instructions[indexInstructions] != null && !dead && !equals(instructions[indexInstructions], "")){
             println(plateau);
-            // delay(2000);
-            // clearScreen();
             String instruction = instructions[indexInstructions];
             switch (instruction){
                 case "haut":
@@ -286,18 +351,6 @@ class Codia extends Program {
         //     win = true;
         // }
         return dead;
-    }
-
-    // Affichage des règles
-    void afficherRegles(Joueur joueur){
-        text(purple);
-        println("Bonjour, " + joueur.pseudo + " ! Bienvenue dans Codia !\n");
-        println("Le but du jeu est tres simple.");
-        println("Le '" + joueur.car + "' represente ton joueur.");
-        println("Le '" + mur + "' represente les murs.");
-        println("Ton but est d'arriver au '" + arrivee + "' sans toucher les murs.\n");
-        println("Bonne chance ! :D");
-        readString();
     }
 
     void checkJoueur(Joueur joueur){
@@ -360,13 +413,13 @@ class Codia extends Program {
         }
     }
 
-    // Fontion principale
-    void algorithm(){
+    void play(){
+        clearScreen();
+        showCodia();
         Joueur joueur = initJoueur(1, 1);
         checkJoueur(joueur);
         String[][] plateau = initPlateau(joueur);
         clearScreen();
-        afficherRegles(joueur);
         boolean result = true;
         do {
             plateau = initPlateau(joueur);
@@ -393,5 +446,94 @@ class Codia extends Program {
             }
             delay(2000);
         } while (result && joueur.niveau <= length(getAllFilesFromDirectory("../csv")));
+    }
+
+/*
+=====================================================================================================================
+REGLES
+=====================================================================================================================
+*/
+
+    // Affichage des règles
+    void afficherRegles(){
+        clearScreen();
+        showCodia();
+        text(green);
+        print("Bonjour et bienvenue dans "); text(blue); println("Codia !\n"); text(green);
+        println("Le but du jeu est tres simple.");
+        print("Le caractere "); text(purple); print('@'); text(green); println(" represente ton joueur.");
+        print("Le caractere "); text(purple); print('#'); text(green); println(" represente les murs.");
+        print("Ton but est d'arriver au caractere "); text(purple); print('?'); text(green); println(" sans toucher les murs.");
+        println("Si tu touches un mur, tu devras recommencer le niveau depuis le debut ! :c");
+        text(red); print("Attention ! "); text(green); println("Ton personnage ne bougeras pas avant que tu aies fini de lui donner toutes les instructions.\n");
+        println("Bonne chance ! :D");
+        print("\n\n\n\n");
+        print("Appuie sur une touche pour continuer...");
+        String rep = readString();
+        if (equals(toLowerCase(rep), "codia")){
+            text(red); println("Prout."); text(white);
+            delay(1000);
+        }
+    }
+
+/*
+=====================================================================================================================
+CREDITS
+=====================================================================================================================
+*/
+
+    void credits(){
+        clearScreen();
+        showCodia();
+        text(green);
+        println("Developpeurs : \n");
+        for (int i = 0; i<length(authors); i++){
+            text(purple);
+            print("    [");
+            text(green);
+            print(i+1);
+            text(purple);
+            print("] - ");
+            text(green);
+            println(authors[i] + "\n");
+        }
+        print("\n\n\n\n");
+        print("Appuie sur une touche pour continuer...");
+        String rep = readString();
+        if (equals(toLowerCase(rep), "codia")){
+            text(red); println("Prout."); text(white);
+            delay(1000);
+        }
+        text(white);
+    }
+
+/*
+=====================================================================================================================
+UTILS
+=====================================================================================================================
+*/
+
+    int toInt(String nombre){
+        int rep = 0;
+        for (int i = 0; i< length(nombre);i++){
+            rep = rep *10;
+            rep += (int)(charAt(nombre,i) - 48);
+        }
+        return rep;
+    }
+
+    void stringToTable(String[] for_tab, String for_S){
+        //prend seulement les instruction donc pas le for(x)
+        int index = 1;
+        int index_tab = 0;
+        while (index < length(for_S) && index_tab < length(for_tab)){
+            if (charAt(for_S,index) == '|'){
+                for_tab[index_tab] = substring(for_S,1,index);
+                index_tab += 1;
+                for_S = substring(for_S,index-1, length(for_S));
+                index = 0;
+            }
+            index += 1;
+        }
     }
 }
